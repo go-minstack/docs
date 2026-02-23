@@ -30,15 +30,44 @@ app.Provide(user_entities.NewUserRepository)
 
 ## Base models
 
-`UuidModel` lives in the database module — pick the one that matches your driver:
+You have two options depending on whether you want `uint` or UUID primary keys.
+
+### `gorm.Model` — uint primary key (works with all drivers)
+
+```go
+type User struct {
+    gorm.Model  // ID uint, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+
+type UserRepository struct {
+    *repository.Repository[User, uint]
+}
+```
+
+### `UuidModel` — UUID primary key (driver-specific)
+
+`UuidModel` lives in the database module. Pick the one that matches your driver:
 
 | Driver | Embed | ID type |
 |--------|-------|---------|
 | PostgreSQL | `postgres.UuidModel` | `uuid.UUID` |
-| MySQL | `mysql.UuidModel` | `mysql.UUID` |
-| SQLite | `gorm.Model` | `uint` |
+| MySQL | `mysql.UuidModel` | `mysql.UUID` (`binary(16)`) |
 
-All UUID variants auto-generate the ID in Go via `BeforeCreate`.
+```go
+// PostgreSQL
+type User struct {
+    postgres.UuidModel
+    Name  string
+}
+
+type UserRepository struct {
+    *repository.Repository[User, uuid.UUID]
+}
+```
+
+UUID variants auto-generate the ID in Go via `BeforeCreate` — no database function needed.
 
 ## Querying
 
