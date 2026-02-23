@@ -7,7 +7,7 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Modules', link: '/modules/core' },
-      { text: 'GitHub', link: 'https://github.com/go-minstack' },
+      { text: 'GitHub', link: 'https://github.com/go-minstack/docs' },
     ],
 
     sidebar: [
