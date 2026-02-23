@@ -30,13 +30,44 @@ Each layer has a single responsibility. Nothing leaks across boundaries.
 
 Defines the GORM model and wraps the generic repository with domain-specific queries.
 
+**With `gorm.Model` (uint primary key — default):**
+
+```go
+package user_entities
+
+import (
+    "github.com/go-minstack/repository"
+    "gorm.io/gorm"
+)
+
+type User struct {
+    gorm.Model
+    Name  string `gorm:"not null"`
+    Email string `gorm:"uniqueIndex;not null"`
+}
+
+type UserRepository struct {
+    *repository.Repository[User]
+}
+
+func NewUserRepository(db *gorm.DB) *UserRepository {
+    return &UserRepository{repository.NewRepository[User](db)}
+}
+
+// Domain-specific query — goes here, not in the service
+func (r *UserRepository) FindByEmail(email string) (*User, error) {
+    return r.FindOne(repository.Where("email = ?", email))
+}
+```
+
+**With `UuidModel` (UUID primary key — optional):**
+
 ```go
 package user_entities
 
 import (
     "github.com/go-minstack/postgres"
     "github.com/go-minstack/repository"
-    "github.com/google/uuid"
     "gorm.io/gorm"
 )
 
@@ -47,11 +78,11 @@ type User struct {
 }
 
 type UserRepository struct {
-    *repository.Repository[User, uuid.UUID]
+    *repository.UuidRepository[User]
 }
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
-    return &UserRepository{repository.New[User, uuid.UUID](db)}
+    return &UserRepository{repository.NewUuidRepository[User](db)}
 }
 
 // Domain-specific query — goes here, not in the service
