@@ -1,0 +1,47 @@
+# sqlite
+
+SQLite module for MinStack. Provides a GORM `*gorm.DB` backed by SQLite — no CGO required.
+
+## Installation
+
+```sh
+go get github.com/go-minstack/sqlite
+```
+
+## Usage
+
+```go
+func main() {
+    app := core.New(cli.Module(), sqlite.Module())
+    app.Provide(NewApp)
+    app.Run()
+}
+```
+
+```sh
+DB_URL=./data.db ./myapp
+```
+
+### In-memory database
+
+Useful for tests and scripts:
+
+```sh
+DB_URL=:memory: ./myapp
+```
+
+## API
+
+### `sqlite.Module() fx.Option`
+Registers `*gorm.DB` into the DI container. Reads `DB_URL` from the environment.
+
+## Environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `DB_URL` | File path (e.g. `./data.db`) or `:memory:` |
+
+## Constraints
+
+- Pure Go — no CGO, no system SQLite library needed
+- Not recommended for high-concurrency production workloads
