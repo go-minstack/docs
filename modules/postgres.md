@@ -22,6 +22,32 @@ func main() {
 DB_URL="host=localhost user=myuser password=mypass dbname=mydb port=5432 sslmode=disable" ./myapp
 ```
 
+## Entity models
+
+### `gorm.Model` — default
+
+The standard GORM base model. Uses `uint` as the primary key and works with all drivers.
+
+```go
+type User struct {
+    gorm.Model          // ID uint, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
+### `postgres.UuidModel` — optional
+
+An alternative base model with a native PostgreSQL `uuid` primary key, auto-generated in Go via `BeforeCreate`.
+
+```go
+type User struct {
+    postgres.UuidModel  // ID uuid.UUID, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
 ## API
 
 ### `postgres.Module() fx.Option`

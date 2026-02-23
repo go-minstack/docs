@@ -22,6 +22,32 @@ func main() {
 DB_URL="user:pass@tcp(localhost:3306)/dbname?parseTime=True" ./myapp
 ```
 
+## Entity models
+
+### `gorm.Model` — default
+
+The standard GORM base model. Uses `uint` as the primary key and works with all drivers.
+
+```go
+type User struct {
+    gorm.Model          // ID uint, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
+### `mysql.UuidModel` — optional
+
+An alternative base model that stores UUIDs as `binary(16)` — efficient and index-friendly. The ID is auto-generated in Go via `BeforeCreate`.
+
+```go
+type User struct {
+    mysql.UuidModel     // ID mysql.UUID, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
 ## UUID type
 
 MySQL doesn't have a native UUID column type. MinStack provides `mysql.UUID` which stores UUIDs as `binary(16)` — efficient and index-friendly.

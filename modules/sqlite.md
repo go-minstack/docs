@@ -30,6 +30,32 @@ Useful for tests and scripts:
 DB_URL=:memory: ./myapp
 ```
 
+## Entity models
+
+### `gorm.Model` — default
+
+The standard GORM base model with `uint` primary key.
+
+```go
+type User struct {
+    gorm.Model  // ID uint, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
+### `sqlite.UuidModel` — optional
+
+An alternative base model with a UUID primary key stored as `text` (SQLite has no native UUID type). The ID is auto-generated in Go via `BeforeCreate`.
+
+```go
+type User struct {
+    sqlite.UuidModel  // ID uuid.UUID, CreatedAt, UpdatedAt, DeletedAt
+    Name  string
+    Email string
+}
+```
+
 ## API
 
 ### `sqlite.Module() fx.Option`

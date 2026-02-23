@@ -3,6 +3,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'MinStack',
   description: 'Minimal, composable Go modules for building backend services.',
+  vite: {
+    server: {
+      allowedHosts: ['go-minstack.toquinha.online'],
+    },
+  },
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/introduction' },

@@ -10,15 +10,27 @@ go get github.com/go-minstack/repository
 
 ## Usage
 
-Embed `*repository.Repository[T, ID]` in your domain entity file and wrap it with a typed struct:
+Embed the repository alias that matches your model's primary key, then wrap it in a typed struct:
 
 ```go
+// uint primary key — matches gorm.Model
 type UserRepository struct {
-    *repository.Repository[User, uuid.UUID]
+    *repository.Repository[User]
 }
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
-    return &UserRepository{repository.New[User, uuid.UUID](db)}
+    return &UserRepository{repository.NewRepository[User](db)}
+}
+```
+
+```go
+// UUID primary key
+type UserRepository struct {
+    *repository.UuidRepository[User]
+}
+
+func NewUserRepository(db *gorm.DB) *UserRepository {
+    return &UserRepository{repository.NewUuidRepository[User](db)}
 }
 ```
 
@@ -28,9 +40,15 @@ Register with FX so `*gorm.DB` is injected automatically:
 app.Provide(user_entities.NewUserRepository)
 ```
 
-## Base models
+## Types
 
-You have two options depending on whether you want `uint` or UUID primary keys.
+| Type | Primary key | Matches |
+|------|-------------|---------|
+| `Repository[T]` | `uint` | `gorm.Model` |
+| `UuidRepository[T]` | `uuid.UUID` | `postgres.UuidModel`, `mysql.UuidModel` |
+| `Repo[T, ID]` | any | custom ID types |
+
+## Base models
 
 ### `gorm.Model` — uint primary key (works with all drivers)
 
@@ -42,7 +60,7 @@ type User struct {
 }
 
 type UserRepository struct {
-    *repository.Repository[User, uint]
+    *repository.Repository[User]
 }
 ```
 
@@ -63,7 +81,7 @@ type User struct {
 }
 
 type UserRepository struct {
-    *repository.Repository[User, uuid.UUID]
+    *repository.UuidRepository[User]
 }
 ```
 
@@ -108,7 +126,7 @@ err := repo.DeleteByID(id)
 ## Transactions
 
 ```go
-err := repo.WithTransaction(func(tx *repository.Repository[User, uuid.UUID]) error {
+err := repo.WithTransaction(func(tx *repository.Repository[User]) error {
     if err := tx.Save(&user); err != nil {
         return err // auto-rollback
     }
@@ -133,7 +151,7 @@ func (r *UserRepository) FindByEmailDomain(domain string) ([]User, error) {
 
 ## API reference
 
-### `Repository[T, ID]`
+### `Repository[T]` / `UuidRepository[T]` / `Repo[T, ID]`
 
 | Method | Description |
 |--------|-------------|
@@ -151,6 +169,14 @@ func (r *UserRepository) FindByEmailDomain(domain string) ([]User, error) {
 | `DeleteAll(opts...)` | Bulk delete — requires at least one option |
 | `WithTransaction(fn)` | Run fn inside a transaction |
 | `DB()` | Raw `*gorm.DB` escape hatch |
+
+### Constructors
+
+| Function | Returns |
+|----------|---------|
+| `NewRepository[T](db)` | `*Repository[T]` — uint primary key |
+| `NewUuidRepository[T](db)` | `*UuidRepository[T]` — UUID primary key |
+| `New[T, ID](db)` | `*Repo[T, ID]` — custom primary key |
 
 ### QueryOptions
 
