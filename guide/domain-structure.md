@@ -1,23 +1,36 @@
 # Domain Structure
 
-MinStack is opinionated about how you organise your code. The recommended layout is inspired by NestJS — each feature lives in its own self-contained domain folder with clear separation between data, logic, and HTTP.
+MinStack is opinionated about how you organise your code. Each feature lives in its own self-contained domain folder with clear separation between data, logic, and HTTP.
+
+## File naming
+
+Files follow a `<name>.<role>.go` suffix convention. This makes the role of every file immediately obvious when scanning a folder.
+
+| Suffix | Role |
+|--------|------|
+| `user.entity.go` | GORM model + Repository wrapper |
+| `user.dto.go` | Response DTO |
+| `create_user.dto.go` | Input DTO |
+| `user.service.go` | Business logic |
+| `user.controller.go` | HTTP handlers |
+| `user.routes.go` | Route registration |
 
 ## Folder layout
 
 ```
 cmd/
-└── main.go                    # Bootstrap — wires all domains together
+└── main.go                         # Bootstrap — wires all domains together
 
 internal/
-└── users/                     # One folder per domain
+└── users/                          # One folder per domain
     ├── entities/
-    │   └── user.go            # GORM model + typed Repository wrapper
+    │   └── user.entity.go          # GORM model + typed Repository wrapper
     ├── dto/
-    │   ├── user.dto.go        # Response DTO + constructor
-    │   └── create_user.dto.go # Input DTO
-    ├── service.go             # Business logic
-    ├── controller.go          # HTTP handlers
-    └── routes.go              # Route registration
+    │   ├── user.dto.go             # Response DTO + constructor
+    │   └── create_user.dto.go      # Input DTO
+    ├── user.service.go             # Business logic
+    ├── user.controller.go          # HTTP handlers
+    └── user.routes.go              # Route registration
 ```
 
 Each layer has a single responsibility. Nothing leaks across boundaries.
@@ -26,7 +39,7 @@ Each layer has a single responsibility. Nothing leaks across boundaries.
 
 ## Layer by layer
 
-### 1. Entity (`entities/user.go`)
+### 1. Entity (`entities/user.entity.go`)
 
 Defines the GORM model and wraps the generic repository with domain-specific queries.
 
@@ -99,7 +112,7 @@ DTOs decouple your API contract from your database model. Never expose the entit
 // dto/user.dto.go
 package dto
 
-import "github.com/go-minstack/users/entities"
+import user_entities "github.com/example/app/internal/users/entities"
 
 type UserDto struct {
     ID    string `json:"id"`
@@ -109,7 +122,7 @@ type UserDto struct {
 
 func NewUserDto(u *user_entities.User) UserDto {
     return UserDto{
-        ID:    u.ID.String(),
+        ID:    fmt.Sprintf("%v", u.ID),
         Name:  u.Name,
         Email: u.Email,
     }
@@ -126,7 +139,7 @@ type CreateUserDto struct {
 }
 ```
 
-### 3. Service (`service.go`)
+### 3. Service (`user.service.go`)
 
 Contains all business logic. Depends on the repository — never on `*gorm.DB` directly.
 
@@ -134,8 +147,9 @@ Contains all business logic. Depends on the repository — never on `*gorm.DB` d
 package users
 
 import (
-    "github.com/go-minstack/users/dto"
-    user_entities "github.com/go-minstack/users/entities"
+    "github.com/go-minstack/repository"
+    "github.com/example/app/internal/users/dto"
+    user_entities "github.com/example/app/internal/users/entities"
 )
 
 type UserService struct {
@@ -151,7 +165,7 @@ func (s *UserService) Create(input dto.CreateUserDto) (*dto.UserDto, error) {
         Name:  input.Name,
         Email: input.Email,
     }
-    if err := s.users.Save(user); err != nil {
+    if err := s.users.Create(user); err != nil {
         return nil, err
     }
     result := dto.NewUserDto(user)
@@ -171,7 +185,7 @@ func (s *UserService) List() ([]dto.UserDto, error) {
 }
 ```
 
-### 4. Controller (`controller.go`)
+### 4. Controller (`user.controller.go`)
 
 Thin HTTP layer. Extracts input, calls the service, returns the response. No business logic here.
 
@@ -181,7 +195,7 @@ package users
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/users/dto"
+    "github.com/example/app/internal/users/dto"
 )
 
 type UserController struct {
@@ -216,7 +230,7 @@ func (c *UserController) create(ctx *gin.Context) {
 }
 ```
 
-### 5. Routes (`routes.go`)
+### 5. Routes (`user.routes.go`)
 
 Registers all endpoints for the domain. Called via `app.Invoke` at startup.
 
@@ -227,8 +241,8 @@ import "github.com/gin-gonic/gin"
 
 func RegisterRoutes(r *gin.Engine, c *UserController) {
     g := r.Group("/api/users")
-    g.GET("",    c.list)
-    g.POST("",   c.create)
+    g.GET("",  c.list)
+    g.POST("", c.create)
 }
 ```
 
@@ -245,8 +259,9 @@ import (
     "github.com/go-minstack/core"
     mgin "github.com/go-minstack/gin"
     "github.com/go-minstack/postgres"
-    "github.com/go-minstack/users"
-    user_entities "github.com/go-minstack/users/entities"
+    "github.com/example/app/internal/users"
+    user_entities "github.com/example/app/internal/users/entities"
+    "gorm.io/gorm"
 )
 
 func migrate(db *gorm.DB) error {
@@ -279,3 +294,4 @@ Adding a second domain is just four more lines following the same pattern.
 | Keep business logic in the service | Controllers stay thin and testable |
 | Domain queries go in the repository | Services don't touch `*gorm.DB` directly |
 | One `RegisterRoutes` per domain | Easy to find and reason about routing |
+| Follow the `<name>.<role>.go` naming | Role is visible at a glance without opening the file |

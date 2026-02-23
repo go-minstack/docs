@@ -111,7 +111,7 @@ total, err := repo.Count(repository.Where("active = ?", true))
 
 ```go
 // Create
-err := repo.Save(&user)
+err := repo.Create(&user)
 
 // Full update
 err := repo.Update(&user)
@@ -127,10 +127,10 @@ err := repo.DeleteByID(id)
 
 ```go
 err := repo.WithTransaction(func(tx *repository.Repository[User]) error {
-    if err := tx.Save(&user); err != nil {
+    if err := tx.Create(&user); err != nil {
         return err // auto-rollback
     }
-    if err := tx.Save(&profile); err != nil {
+    if err := tx.Create(&profile); err != nil {
         return err // auto-rollback
     }
     return nil // auto-commit
@@ -159,7 +159,7 @@ func (r *UserRepository) FindByEmailDomain(domain string) ([]User, error) {
 | `FindAll(opts...)` | All records matching options |
 | `FindOne(opts...)` | First record matching options |
 | `Count(opts...)` | Count matching records |
-| `Save(entity)` | Create a new record |
+| `Create(entity)` | Insert a new record |
 | `Update(entity)` | Full update (all fields) |
 | `Updates(entity, columns)` | Partial update via map |
 | `UpdatesByID(id, columns)` | Partial update by ID |
