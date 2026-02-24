@@ -13,17 +13,17 @@ go get github.com/go-minstack/cli
 Implement `cli.ConsoleApp` and register it with `app.Provide`:
 
 ```go
-type App struct{}
+type App struct{ log *slog.Logger }
 
-func NewApp() cli.ConsoleApp { return &App{} }
+func NewApp(log *slog.Logger) cli.ConsoleApp { return &App{log: log} }
 
 func (a *App) Run(ctx context.Context) error {
-    fmt.Println("Hello!")
+    a.log.Info("Hello!")
     return nil
 }
 
 func main() {
-    app := core.New(cli.Module())
+    app := core.New(cli.Module(), logger.Module())
     app.Provide(NewApp)
     app.Run()
 }

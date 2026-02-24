@@ -12,6 +12,7 @@ Install the modules you need:
 go get github.com/go-minstack/core
 go get github.com/go-minstack/gin      # HTTP server
 go get github.com/go-minstack/cli      # CLI / scripts
+go get github.com/go-minstack/logger   # structured logging
 go get github.com/go-minstack/mysql    # MySQL
 go get github.com/go-minstack/postgres # PostgreSQL
 go get github.com/go-minstack/sqlite   # SQLite
@@ -54,23 +55,24 @@ package main
 
 import (
     "context"
-    "fmt"
+    "log/slog"
 
     "github.com/go-minstack/cli"
     "github.com/go-minstack/core"
+    "github.com/go-minstack/logger"
 )
 
-type App struct{}
+type App struct{ log *slog.Logger }
 
-func NewApp() cli.ConsoleApp { return &App{} }
+func NewApp(log *slog.Logger) cli.ConsoleApp { return &App{log: log} }
 
 func (a *App) Run(ctx context.Context) error {
-    fmt.Println("Hello from MinStack!")
+    a.log.Info("Hello from MinStack!")
     return nil
 }
 
 func main() {
-    app := core.New(cli.Module())
+    app := core.New(cli.Module(), logger.Module())
     app.Provide(NewApp)
     app.Run()
 }
@@ -85,23 +87,23 @@ package main
 
 import (
     "context"
-    "fmt"
     "log"
+    "log/slog"
 
     "github.com/go-minstack/core"
+    "github.com/go-minstack/logger"
 )
 
-type Greeter struct{ name string }
+type Greeter struct{ log *slog.Logger }
 
-func NewGreeter() *Greeter       { return &Greeter{name: "MinStack"} }
-func (g *Greeter) Hello() string { return fmt.Sprintf("Hello from %s!", g.name) }
+func NewGreeter(log *slog.Logger) *Greeter { return &Greeter{log: log} }
 
 func run(g *Greeter) {
-    fmt.Println(g.Hello())
+    g.log.Info("Hello from MinStack!")
 }
 
 func main() {
-    app := core.New()
+    app := core.New(logger.Module())
     app.Provide(NewGreeter)
     app.Invoke(run)
 
@@ -118,17 +120,20 @@ func main() {
 Any provided constructor can accept `fx.Lifecycle` to register `OnStart` / `OnStop` hooks. This is exactly what `cli.Module()` does internally, and it's how database modules open and close connections:
 
 ```go
-import "go.uber.org/fx"
+import (
+    "log/slog"
+    "go.uber.org/fx"
+)
 
-func NewGreeter(lc fx.Lifecycle) *Greeter {
-    g := &Greeter{name: "MinStack"}
+func NewGreeter(lc fx.Lifecycle, log *slog.Logger) *Greeter {
+    g := &Greeter{log: log}
     lc.Append(fx.Hook{
         OnStart: func(ctx context.Context) error {
-            fmt.Println("starting…")
+            log.Info("starting…")
             return nil
         },
         OnStop: func(ctx context.Context) error {
-            fmt.Println("stopping…")
+            log.Info("stopping…")
             return nil
         },
     })

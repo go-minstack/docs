@@ -35,6 +35,7 @@ export default defineConfig({
           { text: 'postgres', link: '/modules/postgres' },
           { text: 'sqlite', link: '/modules/sqlite' },
           { text: 'repository', link: '/modules/repository' },
+          { text: 'logger', link: '/modules/logger' },
         ],
       },
     ],
