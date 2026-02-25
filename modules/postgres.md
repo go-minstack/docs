@@ -19,7 +19,7 @@ func main() {
 ```
 
 ```sh
-DB_URL="host=localhost user=myuser password=mypass dbname=mydb port=5432 sslmode=disable" ./myapp
+MINSTACK_DB_URL="host=localhost user=myuser password=mypass dbname=mydb port=5432 sslmode=disable" ./myapp
 ```
 
 ## Entity models
@@ -51,10 +51,10 @@ type User struct {
 ## API
 
 ### `postgres.Module() fx.Option`
-Registers `*gorm.DB` into the DI container. Reads `DB_URL` from the environment.
+Registers `*gorm.DB` into the DI container. Reads `MINSTACK_DB_URL` from the environment.
 
 ## Environment variables
 
 | Variable | Description |
 |----------|-------------|
-| `DB_URL` | PostgreSQL DSN, e.g. `host=localhost user=u password=p dbname=db sslmode=disable` |
+| `MINSTACK_DB_URL` | PostgreSQL DSN, e.g. `host=localhost user=u password=p dbname=db sslmode=disable` |

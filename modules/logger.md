@@ -19,7 +19,7 @@ func main() {
 ```
 
 ```sh
-LOG_FORMAT=console LOG_LEVEL=debug ./myapp
+MINSTACK_LOG_FORMAT=console MINSTACK_LOG_LEVEL=debug ./myapp
 ```
 
 Inject `*slog.Logger` wherever you need it:
@@ -51,8 +51,8 @@ Configures the logger from env vars and registers `*slog.Logger` into the DI con
 
 | Variable | Values | Default |
 |----------|--------|---------|
-| `LOG_LEVEL` | trace, debug, info, warn, error | info |
-| `LOG_FORMAT` | json, console | json |
+| `MINSTACK_LOG_LEVEL` | trace, debug, info, warn, error | info |
+| `MINSTACK_LOG_FORMAT` | json, console | json |
 
 ## Output formats
 
@@ -65,7 +65,7 @@ Configures the logger from env vars and registers `*slog.Logger` into the DI con
 **Console** — human-readable, colored, suitable for local development:
 
 ```sh
-LOG_FORMAT=console ./myapp
+MINSTACK_LOG_FORMAT=console ./myapp
 ```
 
 ## Notes

@@ -39,12 +39,12 @@ go get gorm.io/gorm
 ## .env
 
 ```ini
-DB_URL=task-api.db
+MINSTACK_DB_URL=task-api.db
 MINSTACK_JWT_SECRET=super-secret-key-change-in-production
-PORT=8080
+MINSTACK_PORT=8080
 ```
 
-`DB_URL` is the SQLite file path. `MINSTACK_JWT_SECRET` is the HMAC key used by `auth.Module()` to sign JWTs. For production, use RSA keys instead — see the [auth module docs](/modules/auth).
+`MINSTACK_DB_URL` is the SQLite file path. `MINSTACK_JWT_SECRET` is the HMAC key used by `auth.Module()` to sign JWTs. For production, use RSA keys instead — see the [auth module docs](/modules/auth).
 
 ---
 

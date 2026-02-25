@@ -42,6 +42,6 @@ Registers a `*gin.Engine` into the DI container with sensible defaults (recovery
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `HOST` | `0.0.0.0` | Address to bind |
-| `PORT` | `8080` | Port to listen on |
-| `CORS_ORIGIN` | _(unset)_ | Allowed origin(s), comma-separated. Use `*` to allow all. |
+| `MINSTACK_HOST` | `0.0.0.0` | Address to bind |
+| `MINSTACK_PORT` | `8080` | Port to listen on |
+| `MINSTACK_CORS_ORIGIN` | _(unset)_ | Allowed origin(s), comma-separated. Use `*` to allow all. |

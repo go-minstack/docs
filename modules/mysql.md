@@ -19,7 +19,7 @@ func main() {
 ```
 
 ```sh
-DB_URL="user:pass@tcp(localhost:3306)/dbname?parseTime=True" ./myapp
+MINSTACK_DB_URL="user:pass@tcp(localhost:3306)/dbname?parseTime=True" ./myapp
 ```
 
 ## Entity models
@@ -64,7 +64,7 @@ user := User{ID: mysql.NewUUID(), Name: "MinStack"}
 ## API
 
 ### `mysql.Module() fx.Option`
-Registers `*gorm.DB` into the DI container. Reads `DB_URL` from the environment.
+Registers `*gorm.DB` into the DI container. Reads `MINSTACK_DB_URL` from the environment.
 
 ### UUID
 
@@ -80,4 +80,4 @@ Registers `*gorm.DB` into the DI container. Reads `DB_URL` from the environment.
 
 | Variable | Description |
 |----------|-------------|
-| `DB_URL` | MySQL DSN, e.g. `user:pass@tcp(host:3306)/db?parseTime=True` |
+| `MINSTACK_DB_URL` | MySQL DSN, e.g. `user:pass@tcp(host:3306)/db?parseTime=True` |

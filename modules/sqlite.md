@@ -19,7 +19,7 @@ func main() {
 ```
 
 ```sh
-DB_URL=./data.db ./myapp
+MINSTACK_DB_URL=./data.db ./myapp
 ```
 
 ### In-memory database
@@ -27,7 +27,7 @@ DB_URL=./data.db ./myapp
 Useful for tests and scripts:
 
 ```sh
-DB_URL=:memory: ./myapp
+MINSTACK_DB_URL=:memory: ./myapp
 ```
 
 ## Entity models
@@ -59,13 +59,13 @@ type User struct {
 ## API
 
 ### `sqlite.Module() fx.Option`
-Registers `*gorm.DB` into the DI container. Reads `DB_URL` from the environment.
+Registers `*gorm.DB` into the DI container. Reads `MINSTACK_DB_URL` from the environment.
 
 ## Environment variables
 
 | Variable | Description |
 |----------|-------------|
-| `DB_URL` | File path (e.g. `./data.db`) or `:memory:` |
+| `MINSTACK_DB_URL` | File path (e.g. `./data.db`) or `:memory:` |
 
 ## Constraints
 

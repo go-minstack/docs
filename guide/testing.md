@@ -6,7 +6,7 @@ MinStack apps are straightforward to test because FX manages the wiring. Use `ap
 
 ```go
 func TestSomething(t *testing.T) {
-    t.Setenv("DB_URL", ":memory:")
+    t.Setenv("MINSTACK_DB_URL", ":memory:")
 
     app := core.New(sqlite.Module())
     app.Provide(NewUserRepository)
@@ -35,7 +35,7 @@ func TestSomething(t *testing.T) {
 
 ```go
 func TestUserService_Create(t *testing.T) {
-    t.Setenv("DB_URL", ":memory:")
+    t.Setenv("MINSTACK_DB_URL", ":memory:")
 
     app := core.New(sqlite.Module())
     app.Provide(user_entities.NewUserRepository)
@@ -72,7 +72,7 @@ Use `httptest.NewRecorder` to test HTTP handlers without starting a real server.
 
 ```go
 func TestUserController_List(t *testing.T) {
-    t.Setenv("DB_URL", ":memory:")
+    t.Setenv("MINSTACK_DB_URL", ":memory:")
 
     app := core.New(sqlite.Module())
     app.Provide(user_entities.NewUserRepository)
@@ -104,11 +104,11 @@ func TestUserController_List(t *testing.T) {
 
 ## Testing with real databases
 
-When you need PostgreSQL or MySQL-specific behaviour (JSON columns, full-text search, etc.), use Docker in CI and point `DB_URL` at the real service:
+When you need PostgreSQL or MySQL-specific behaviour (JSON columns, full-text search, etc.), use Docker in CI and point `MINSTACK_DB_URL` at the real service:
 
 ```sh
 # Run tests against a local Postgres instance
-DB_URL="host=localhost user=minstack password=minstack dbname=minstack_test sslmode=disable" \
+MINSTACK_DB_URL="host=localhost user=minstack password=minstack dbname=minstack_test sslmode=disable" \
     go test ./...
 ```
 

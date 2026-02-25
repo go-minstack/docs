@@ -154,7 +154,7 @@ Database modules read connection details from the environment:
 
 | Variable | Used by |
 |----------|---------|
-| `DB_URL` | mysql, postgres, sqlite |
-| `HOST` | gin (default: `0.0.0.0`) |
-| `PORT` | gin (default: `8080`) |
-| `CORS_ORIGIN` | gin (optional) |
+| `MINSTACK_DB_URL` | mysql, postgres, sqlite |
+| `MINSTACK_HOST` | gin (default: `0.0.0.0`) |
+| `MINSTACK_PORT` | gin (default: `8080`) |
+| `MINSTACK_CORS_ORIGIN` | gin (optional) |
