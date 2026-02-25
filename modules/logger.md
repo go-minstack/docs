@@ -2,27 +2,9 @@
 
 Structured logging module for MinStack. Provides a `*slog.Logger` (Go standard library) with structured, high-performance output — no logging dependency required in your application code.
 
-## Installation
-
-```sh
-go get github.com/go-minstack/logger
-```
-
 ## Usage
 
-```go
-func main() {
-    app := core.New(logger.Module())
-    app.Invoke(run)
-    app.Run()
-}
-```
-
-```sh
-MINSTACK_LOG_FORMAT=console MINSTACK_LOG_LEVEL=debug ./myapp
-```
-
-Inject `*slog.Logger` wherever you need it:
+The logger is **included automatically** by `core.New()` — no installation or registration needed. Just inject `*slog.Logger` wherever you need it:
 
 ```go
 type UserService struct {
@@ -38,14 +20,15 @@ func (s *UserService) Create(name string) {
 }
 ```
 
+Configure via environment variables:
+
+```sh
+MINSTACK_LOG_FORMAT=console MINSTACK_LOG_LEVEL=debug ./myapp
+```
+
 ## FX lifecycle events
 
-`logger.Module()` also routes FX's own lifecycle events (Provided, Invoked, Started, etc.) through the same logger, replacing FX's default stdout output.
-
-## API
-
-### `logger.Module() fx.Option`
-Configures the logger from env vars and registers `*slog.Logger` into the DI container.
+The logger also routes FX's own lifecycle events (Provided, Invoked, Started, etc.) through the same logger, replacing FX's default stdout output.
 
 ## Environment variables
 
