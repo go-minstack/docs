@@ -2,9 +2,15 @@
 
 Structured logging module for MinStack. Provides a `*slog.Logger` (Go standard library) with structured, high-performance output — no logging dependency required in your application code.
 
+## Installation
+
+```sh
+go get github.com/go-minstack/logger
+```
+
 ## Usage
 
-The logger is **included automatically** by `core.New()` — no installation or registration needed. Just inject `*slog.Logger` wherever you need it:
+The logger is **included automatically** by `core.New()` — you don't need to register `logger.Module()`. Just inject `*slog.Logger` wherever you need it:
 
 ```go
 type UserService struct {
