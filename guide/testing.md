@@ -176,10 +176,8 @@ go tool cover -func=coverage.out
 ```
 todo.controller.go:21   list            60.0%
 todo.controller.go:30   create          77.8%
-todo.service.go:26      List            85.7%
-todo.service.go:50      Get             100.0%
-todo.service.go:81      Delete          100.0%
-total:                  (statements)    77.7%
+todo.service.go:59      Update          91.7%
+total:                  (statements)    94.7%
 ```
 
 Generate an HTML report:
