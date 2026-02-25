@@ -47,6 +47,17 @@ Both a wrong email and a wrong password return the same `"invalid credentials"` 
 
 `auth.Claims.Subject` stores the user ID as a string. Protected endpoints parse it back to `uint` via `strconv.ParseUint`.
 
+## DTO
+
+```go
+// internal/auth/dto/token.dto.go
+package auth_dto
+
+type TokenDto struct {
+    Token string `json:"token"`
+}
+```
+
 ## Controller
 
 ```go
@@ -58,6 +69,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/go-minstack/web"
+    auth_dto "task-api/internal/auth/dto"
     "task-api/internal/users/dto"
 )
 
@@ -80,7 +92,7 @@ func (c *AuthController) login(ctx *gin.Context) {
         ctx.JSON(http.StatusUnauthorized, web.NewErrorDto(err))
         return
     }
-    ctx.JSON(http.StatusOK, gin.H{"token": token})
+    ctx.JSON(http.StatusOK, auth_dto.TokenDto{Token: token})
 }
 ```
 
