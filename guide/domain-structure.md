@@ -8,7 +8,8 @@ Files follow a `<name>.<role>.go` suffix convention. This makes the role of ever
 
 | Suffix | Role |
 |--------|------|
-| `user.entity.go` | GORM model + Repository wrapper |
+| `user.entity.go` | GORM model |
+| `user.repository.go` | Repository wrapper + domain queries |
 | `user.dto.go` | Response DTO |
 | `create_user.dto.go` | Input DTO |
 | `user.service.go` | Business logic |
@@ -24,7 +25,9 @@ cmd/
 internal/
 └── users/                          # One folder per domain
     ├── entities/
-    │   └── user.entity.go          # GORM model + typed Repository wrapper
+    │   └── user.entity.go          # GORM model
+    ├── repositories/
+    │   └── user.repository.go      # Typed Repository wrapper + domain queries
     ├── dto/
     │   ├── user.dto.go             # Response DTO + constructor
     │   └── create_user.dto.go      # Input DTO
@@ -41,35 +44,19 @@ Each layer has a single responsibility. Nothing leaks across boundaries.
 
 ### 1. Entity (`entities/user.entity.go`)
 
-Defines the GORM model and wraps the generic repository with domain-specific queries.
+Defines only the GORM model. No query logic lives here.
 
 **With `gorm.Model` (uint primary key — default):**
 
 ```go
 package user_entities
 
-import (
-    "github.com/go-minstack/repository"
-    "gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type User struct {
     gorm.Model
     Name  string `gorm:"not null"`
     Email string `gorm:"uniqueIndex;not null"`
-}
-
-type UserRepository struct {
-    *repository.Repository[User]
-}
-
-func NewUserRepository(db *gorm.DB) *UserRepository {
-    return &UserRepository{repository.NewRepository[User](db)}
-}
-
-// Domain-specific query — goes here, not in the service
-func (r *UserRepository) FindByEmail(email string) (*User, error) {
-    return r.FindOne(repository.Where("email = ?", email))
 }
 ```
 
@@ -78,35 +65,74 @@ func (r *UserRepository) FindByEmail(email string) (*User, error) {
 ```go
 package user_entities
 
-import (
-    "github.com/go-minstack/postgres"
-    "github.com/go-minstack/repository"
-    "gorm.io/gorm"
-)
+import "github.com/go-minstack/postgres"
 
 type User struct {
     postgres.UuidModel
     Name  string `gorm:"not null"`
     Email string `gorm:"uniqueIndex;not null"`
 }
+```
+
+### 2. Repository (`repositories/user.repository.go`)
+
+Wraps the generic repository and adds domain-specific queries.
+
+**With `gorm.Model`:**
+
+```go
+package user_repositories
+
+import (
+    "github.com/go-minstack/repository"
+    user_entities "github.com/example/app/internal/users/entities"
+    "gorm.io/gorm"
+)
 
 type UserRepository struct {
-    *repository.UuidRepository[User]
+    *repository.Repository[user_entities.User]
 }
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
-    return &UserRepository{repository.NewUuidRepository[User](db)}
+    return &UserRepository{repository.NewRepository[user_entities.User](db)}
 }
 
 // Domain-specific query — goes here, not in the service
-func (r *UserRepository) FindByEmail(email string) (*User, error) {
+func (r *UserRepository) FindByEmail(email string) (*user_entities.User, error) {
     return r.FindOne(repository.Where("email = ?", email))
 }
 ```
 
-### 2. DTOs (`dto/`)
+**With `UuidModel`:**
+
+```go
+package user_repositories
+
+import (
+    "github.com/go-minstack/repository"
+    user_entities "github.com/example/app/internal/users/entities"
+    "gorm.io/gorm"
+)
+
+type UserRepository struct {
+    *repository.UuidRepository[user_entities.User]
+}
+
+func NewUserRepository(db *gorm.DB) *UserRepository {
+    return &UserRepository{repository.NewUuidRepository[user_entities.User](db)}
+}
+
+// Domain-specific query — goes here, not in the service
+func (r *UserRepository) FindByEmail(email string) (*user_entities.User, error) {
+    return r.FindOne(repository.Where("email = ?", email))
+}
+```
+
+### 3. DTOs (`dto/`)
 
 DTOs decouple your API contract from your database model. Never expose the entity directly.
+
+**With `gorm.Model` (uint primary key — default):**
 
 ```go
 // dto/user.dto.go
@@ -115,14 +141,40 @@ package dto
 import user_entities "github.com/example/app/internal/users/entities"
 
 type UserDto struct {
-    ID    string `json:"id"`
+    ID    uint   `json:"id"`
     Name  string `json:"name"`
     Email string `json:"email"`
 }
 
 func NewUserDto(u *user_entities.User) UserDto {
     return UserDto{
-        ID:    fmt.Sprintf("%v", u.ID),
+        ID:    u.ID,
+        Name:  u.Name,
+        Email: u.Email,
+    }
+}
+```
+
+**With `UuidModel` (UUID primary key — optional):**
+
+```go
+// dto/user.dto.go
+package dto
+
+import (
+    "github.com/google/uuid"
+    user_entities "github.com/example/app/internal/users/entities"
+)
+
+type UserDto struct {
+    ID    uuid.UUID `json:"id"`
+    Name  string    `json:"name"`
+    Email string    `json:"email"`
+}
+
+func NewUserDto(u *user_entities.User) UserDto {
+    return UserDto{
+        ID:    u.ID,
         Name:  u.Name,
         Email: u.Email,
     }
@@ -139,7 +191,7 @@ type CreateUserDto struct {
 }
 ```
 
-### 3. Service (`user.service.go`)
+### 4. Service (`user.service.go`)
 
 Contains all business logic. Depends on the repository — never on `*gorm.DB` directly.
 
@@ -150,13 +202,14 @@ import (
     "github.com/go-minstack/repository"
     "github.com/example/app/internal/users/dto"
     user_entities "github.com/example/app/internal/users/entities"
+    user_repos "github.com/example/app/internal/users/repositories"
 )
 
 type UserService struct {
-    users *user_entities.UserRepository
+    users *user_repos.UserRepository
 }
 
-func NewUserService(users *user_entities.UserRepository) *UserService {
+func NewUserService(users *user_repos.UserRepository) *UserService {
     return &UserService{users: users}
 }
 
@@ -185,7 +238,7 @@ func (s *UserService) List() ([]dto.UserDto, error) {
 }
 ```
 
-### 4. Controller (`user.controller.go`)
+### 5. Controller (`user.controller.go`)
 
 Thin HTTP layer. Extracts input, calls the service, returns the response. No business logic here.
 
@@ -230,7 +283,7 @@ func (c *UserController) create(ctx *gin.Context) {
 }
 ```
 
-### 5. Routes (`user.routes.go`)
+### 6. Routes (`user.routes.go`)
 
 Registers all endpoints for the domain. Called via `app.Invoke` at startup.
 
@@ -261,6 +314,7 @@ import (
     "github.com/go-minstack/postgres"
     "github.com/example/app/internal/users"
     user_entities "github.com/example/app/internal/users/entities"
+    user_repos "github.com/example/app/internal/users/repositories"
     "gorm.io/gorm"
 )
 
@@ -272,7 +326,7 @@ func main() {
     app := core.New(mgin.Module(), postgres.Module())
 
     // users domain
-    app.Provide(user_entities.NewUserRepository)
+    app.Provide(user_repos.NewUserRepository)
     app.Provide(users.NewUserService)
     app.Provide(users.NewUserController)
     app.Invoke(users.RegisterRoutes)

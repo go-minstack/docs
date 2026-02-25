@@ -12,6 +12,7 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Modules', link: '/modules/core' },
+      { text: 'Tutorials', link: '/tutorials/task-api/' },
       { text: 'GitHub', link: 'https://github.com/go-minstack/docs' },
     ],
 
@@ -36,6 +37,24 @@ export default defineConfig({
           { text: 'sqlite', link: '/modules/sqlite' },
           { text: 'repository', link: '/modules/repository' },
           { text: 'logger', link: '/modules/logger' },
+          { text: 'auth', link: '/modules/auth' },
+        ],
+      },
+      {
+        text: 'Tutorials',
+        items: [
+          {
+            text: 'Task API',
+            collapsed: false,
+            items: [
+              { text: 'Overview', link: '/tutorials/task-api/' },
+              { text: '1. Project Setup', link: '/tutorials/task-api/setup' },
+              { text: '2. Users domain', link: '/tutorials/task-api/users' },
+              { text: '3. Auth domain', link: '/tutorials/task-api/auth' },
+              { text: '4. Tasks domain', link: '/tutorials/task-api/tasks' },
+              { text: '5. Bootstrap', link: '/tutorials/task-api/bootstrap' },
+            ],
+          },
         ],
       },
     ],
