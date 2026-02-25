@@ -29,16 +29,36 @@ export default defineConfig({
       {
         text: 'Modules',
         items: [
-          { text: 'core', link: '/modules/core' },
-          { text: 'gin', link: '/modules/gin' },
-          { text: 'cli', link: '/modules/cli' },
-          { text: 'mysql', link: '/modules/mysql' },
-          { text: 'postgres', link: '/modules/postgres' },
-          { text: 'sqlite', link: '/modules/sqlite' },
-          { text: 'repository', link: '/modules/repository' },
-          { text: 'logger', link: '/modules/logger' },
-          { text: 'auth', link: '/modules/auth' },
-          { text: 'web', link: '/modules/web' },
+          {
+            text: 'Foundation',
+            items: [
+              { text: 'core', link: '/modules/core' },
+              { text: 'logger', link: '/modules/logger' },
+            ],
+          },
+          {
+            text: 'HTTP',
+            items: [
+              { text: 'gin', link: '/modules/gin' },
+              { text: 'cli', link: '/modules/cli' },
+              { text: 'web', link: '/modules/web' },
+            ],
+          },
+          {
+            text: 'Data',
+            items: [
+              { text: 'repository', link: '/modules/repository' },
+              { text: 'sqlite', link: '/modules/sqlite' },
+              { text: 'mysql', link: '/modules/mysql' },
+              { text: 'postgres', link: '/modules/postgres' },
+            ],
+          },
+          {
+            text: 'Security',
+            items: [
+              { text: 'auth', link: '/modules/auth' },
+            ],
+          },
         ],
       },
       {
