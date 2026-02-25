@@ -12,7 +12,7 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Modules', link: '/modules/core' },
-      { text: 'Tutorials', link: '/tutorials/task-api/' },
+      { text: 'Tutorials', link: '/tutorials/todo-api/' },
       { text: 'GitHub', link: 'https://github.com/go-minstack/docs' },
     ],
 
@@ -65,8 +65,19 @@ export default defineConfig({
         text: 'Tutorials',
         items: [
           {
-            text: 'Task API',
+            text: 'Todo API',
             collapsed: false,
+            items: [
+              { text: 'Overview', link: '/tutorials/todo-api/' },
+              { text: '1. Project Setup', link: '/tutorials/todo-api/setup' },
+              { text: '2. Todos domain', link: '/tutorials/todo-api/todos' },
+              { text: '3. Bootstrap', link: '/tutorials/todo-api/bootstrap' },
+              { text: '4. Testing', link: '/tutorials/todo-api/testing' },
+            ],
+          },
+          {
+            text: 'Task API',
+            collapsed: true,
             items: [
               { text: 'Overview', link: '/tutorials/task-api/' },
               { text: '1. Project Setup', link: '/tutorials/task-api/setup' },
