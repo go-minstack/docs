@@ -159,6 +159,39 @@ func TestTodoAPI(t *testing.T) {
 
 ---
 
+## Coverage
+
+Go has built-in coverage. Use `-coverpkg=./internal/...` to measure only your application code (excluding `cmd/main.go` which can't be unit-tested):
+
+```sh
+go test ./... -coverpkg=./internal/... -coverprofile=coverage.out
+```
+
+View per-function breakdown:
+
+```sh
+go tool cover -func=coverage.out
+```
+
+```
+todo.controller.go:21   list            60.0%
+todo.controller.go:30   create          77.8%
+todo.service.go:26      List            85.7%
+todo.service.go:50      Get             100.0%
+todo.service.go:81      Delete          100.0%
+total:                  (statements)    77.7%
+```
+
+Generate an HTML report:
+
+```sh
+go tool cover -html=coverage.out -o coverage.html
+```
+
+This opens a visual file-by-file report where covered lines are green and uncovered lines are red — similar to Istanbul/Jest.
+
+---
+
 ## Testing with real databases
 
 When you need PostgreSQL or MySQL-specific behaviour (JSON columns, full-text search, etc.), use Docker in CI and point `MINSTACK_DB_URL` at the real service:
