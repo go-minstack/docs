@@ -38,6 +38,7 @@ export default defineConfig({
           { text: 'repository', link: '/modules/repository' },
           { text: 'logger', link: '/modules/logger' },
           { text: 'auth', link: '/modules/auth' },
+          { text: 'web', link: '/modules/web' },
         ],
       },
       {
