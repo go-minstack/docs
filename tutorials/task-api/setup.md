@@ -23,18 +23,17 @@ cd task-api
 go mod init task-api
 ```
 
-The only external dependencies you need to declare directly are `gorm.io/gorm` (for entity types) and `golang.org/x/crypto` (for bcrypt). Everything else — `core`, `gin`, `sqlite`, `auth`, `repository` — is resolved via the go workspace.
+Install all dependencies with `go get`:
 
-```go
-// go.mod
-module task-api
-
-go 1.25.1
-
-require (
-    golang.org/x/crypto v0.36.0
-    gorm.io/gorm v1.31.1
-)
+```sh
+go get github.com/go-minstack/core
+go get github.com/go-minstack/gin
+go get github.com/go-minstack/sqlite
+go get github.com/go-minstack/auth
+go get github.com/go-minstack/repository
+go get github.com/go-minstack/web
+go get golang.org/x/crypto
+go get gorm.io/gorm
 ```
 
 ## .env
