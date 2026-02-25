@@ -94,6 +94,164 @@ Since the test file is in the **same package**, it can access the unexported `to
 
 ---
 
+## Go testing patterns
+
+These are standard Go idioms that make tests clearer and more maintainable.
+
+### Table-driven tests
+
+Instead of writing separate functions for each input, define a **slice of test cases** and loop over them. This is the most common Go test pattern:
+
+```go
+func TestTodoService_Get(t *testing.T) {
+    repo := newMockTodoRepo()
+    svc := &TodoService{todos: repo}
+    repo.Create(&todo_entities.Todo{Title: "Buy milk"})
+
+    tests := []struct {
+        name    string
+        id      uint
+        wantErr bool
+    }{
+        {"found", 1, false},
+        {"not found", 999, true},
+        {"zero id", 0, true},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            todo, err := svc.Get(tt.id)
+            if tt.wantErr {
+                assert.Error(t, err)
+                return
+            }
+            require.NoError(t, err)
+            assert.Equal(t, "Buy milk", todo.Title)
+        })
+    }
+}
+```
+
+**Why?** Adding a new case is just one line in the table. The test name appears in output (`TestTodoService_Get/not_found`), so failures are easy to locate.
+
+### require vs assert
+
+Both come from `testify`, but they behave differently on failure:
+
+| | On failure | Use when |
+|---|---|---|
+| `assert` | Logs the failure, **continues** the test | Checking multiple fields on the same response |
+| `require` | Logs the failure, **stops** the test immediately | A precondition that makes subsequent checks pointless |
+
+```go
+// require — if this fails, the rest makes no sense
+require.NoError(t, err)
+require.NotNil(t, todo)
+
+// assert — check multiple fields, see all failures at once
+assert.Equal(t, "Buy milk", todo.Title)
+assert.Equal(t, "From the store", todo.Description)
+assert.False(t, todo.Done)
+```
+
+**Rule of thumb:** use `require` for errors and nil checks, `assert` for everything else.
+
+### t.Helper()
+
+When you extract a helper function, call `t.Helper()` at the top. This makes Go report the **caller's line number** on failure instead of the helper's:
+
+```go
+func createTodo(t *testing.T, r *gin.Engine, title string) uint {
+    t.Helper() // ← failure points to the caller, not this function
+
+    w := httptest.NewRecorder()
+    body := jsonBody(map[string]string{"title": title})
+    req := httptest.NewRequest(http.MethodPost, "/api/todos", body)
+    req.Header.Set("Content-Type", "application/json")
+    r.ServeHTTP(w, req)
+
+    require.Equal(t, http.StatusCreated, w.Code)
+
+    var todo map[string]any
+    parseJSON(t, w, &todo)
+    return uint(todo["id"].(float64))
+}
+```
+
+Without `t.Helper()`, a failure would point to the `require.Equal` line inside `createTodo`. With it, the failure points to the test that called `createTodo` — much easier to debug.
+
+### Covering error branches
+
+Real services have error paths. To cover them, create a mock that **always fails**:
+
+```go
+type failingMockRepo struct{}
+
+func (m *failingMockRepo) FindAll(...) ([]Todo, error) {
+    return nil, errors.New("db error")
+}
+func (m *failingMockRepo) Create(entity *Todo) error {
+    return errors.New("db error")
+}
+// ... same for FindByID, UpdatesByID, DeleteByID
+```
+
+Then test all error branches in one go:
+
+```go
+func TestTodoService_DBErrors(t *testing.T) {
+    svc := &TodoService{todos: &failingMockRepo{}}
+
+    _, err := svc.List()
+    assert.Error(t, err)
+
+    _, err = svc.Create(dto.CreateTodoDto{Title: "Buy milk"})
+    assert.Error(t, err)
+
+    _, err = svc.Get(1)
+    assert.Error(t, err)
+}
+```
+
+For methods with **two failure points** (e.g. `Update` calls `FindByID` then `UpdatesByID`), embed the working mock and override only one method:
+
+```go
+type updateFailMockRepo struct {
+    mockTodoRepo // inherits FindByID (success)
+}
+
+func (m *updateFailMockRepo) UpdatesByID(id uint, columns map[string]interface{}) error {
+    return errors.New("db error") // only this fails
+}
+```
+
+This technique is what pushed our Todo API coverage from 77% to 94%.
+
+### Parallel tests
+
+Independent tests can run concurrently with `t.Parallel()`:
+
+```go
+func TestTodoService_Get(t *testing.T) {
+    t.Parallel() // ← this test runs in parallel with other parallel tests
+
+    repo := newMockTodoRepo()
+    svc := &TodoService{todos: repo}
+    repo.Create(&todo_entities.Todo{Title: "Buy milk"})
+
+    t.Run("found", func(t *testing.T) {
+        t.Parallel()
+        todo, err := svc.Get(1)
+        require.NoError(t, err)
+        assert.Equal(t, "Buy milk", todo.Title)
+    })
+}
+```
+
+**Caution:** only use `t.Parallel()` when subtests don't share mutable state. Our E2E tests (`TestTodoAPI`) run sequentially because each subtest depends on the previous one (Create → Get → Update → Delete).
+
+---
+
 ## E2E testing
 
 E2E tests boot the full MinStack app — real database, real HTTP routing — and exercise the API end to end using `httptest`.
@@ -214,6 +372,20 @@ go get github.com/stretchr/testify
 | `testify/require` | Fail fast on fatal assertions (`require.NoError`, `require.NotNil`) |
 | `testify/assert` | Non-fatal assertions (`assert.Equal`, `assert.Empty`) |
 | `net/http/httptest` | Standard library — recorder + request for E2E tests |
+
+---
+
+## Tips
+
+| Tip | Why |
+|-----|-----|
+| Keep unit tests fast — no network, no disk, no database | Fast feedback loop; run on every save |
+| One assertion per concept, not per line | `assert.Equal(t, "Buy milk", todo.Title)` tests one thing even if it's one line |
+| Test behavior, not implementation | Don't assert that `FindByID` was called — assert that `Get(1)` returns the right todo |
+| Use `t.Run` for subtests | Groups related cases, shows which exact case failed |
+| Use `t.Cleanup` instead of `defer` | Runs even if `t.Fatal` is called, and runs in LIFO order |
+| Name tests `TestType_Method` | `TestTodoService_Create` — consistent, easy to filter with `-run` |
+| Filter tests with `-run` | `go test -run TestTodoService_Create` runs only that test |
 
 ---
 
