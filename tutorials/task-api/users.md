@@ -223,9 +223,6 @@ import (
 func Register(app *core.App) {
     app.Provide(user_repos.NewUserRepository)
     app.Provide(NewUserService)
-}
-
-func RegisterService(app *core.App) {
     app.Provide(NewUserController)
     app.Invoke(RegisterRoutes)
 }

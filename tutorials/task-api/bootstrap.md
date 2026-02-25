@@ -30,28 +30,21 @@ func migrate(db *gorm.DB) error {
 func main() {
     app := core.New(mgin.Module(), sqlite.Module(), auth.Module())
 
-    // Register shared dependencies (repositories + services)
     users.Register(app)
     authn.Register(app)
     tasks.Register(app)
-
-    // Register HTTP layer (controllers + routes)
-    users.RegisterService(app)
-    authn.RegisterService(app)
-    tasks.RegisterService(app)
 
     app.Invoke(migrate)
     app.Run()
 }
 ```
 
-Call `Register` for every domain first, then `RegisterService`. This ensures FX can resolve all dependencies (repositories, services) before any controller or route is registered.
+Each `Register` call provides all constructors and invokes route registration for its domain. FX resolves the dependency graph automatically.
 
-Adding a new domain is always the same four lines:
+Adding a new domain is always two lines:
 
 ```go
 newdomain.Register(app)
-newdomain.RegisterService(app)
 // + one line in migrate()
 ```
 

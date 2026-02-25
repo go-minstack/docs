@@ -362,9 +362,6 @@ import (
 func Register(app *core.App) {
     app.Provide(task_repos.NewTaskRepository)
     app.Provide(NewTaskService)
-}
-
-func RegisterService(app *core.App) {
     app.Provide(NewTaskController)
     app.Invoke(RegisterRoutes)
 }
