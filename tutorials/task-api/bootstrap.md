@@ -12,7 +12,7 @@ import (
     "github.com/go-minstack/core"
     mgin "github.com/go-minstack/gin"
     "github.com/go-minstack/sqlite"
-    auth_domain "task-api/internal/auth"
+    "task-api/internal/authn"
     "task-api/internal/tasks"
     task_entities "task-api/internal/tasks/entities"
     "task-api/internal/users"
@@ -32,12 +32,12 @@ func main() {
 
     // Register shared dependencies (repositories + services)
     users.Register(app)
-    auth_domain.Register(app)
+    authn.Register(app)
     tasks.Register(app)
 
     // Register HTTP layer (controllers + routes)
     users.RegisterService(app)
-    auth_domain.RegisterService(app)
+    authn.RegisterService(app)
     tasks.RegisterService(app)
 
     app.Invoke(migrate)

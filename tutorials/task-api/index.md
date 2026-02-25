@@ -9,7 +9,7 @@ A **Task API** with three domains:
 | Domain | Responsibility |
 |--------|----------------|
 | `users` | Register an account, fetch your profile |
-| `auth` | Login and receive a JWT |
+| `authn` | Login and receive a JWT |
 | `tasks` | Create, list, update, and delete your tasks |
 
 ## Routes
@@ -43,7 +43,8 @@ task-api/
 │   │   ├── user.controller.go
 │   │   ├── user.routes.go
 │   │   └── module.go
-│   ├── auth/
+│   ├── authn/
+│   │   ├── dto/token.dto.go
 │   │   ├── auth.service.go
 │   │   ├── auth.controller.go
 │   │   ├── auth.routes.go

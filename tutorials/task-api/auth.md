@@ -1,12 +1,12 @@
 # 3. Auth domain
 
-The `auth` domain has a single responsibility: validate credentials and issue a JWT. It has no entity or repository of its own — it depends on the users repository.
+The `authn` domain has a single responsibility: validate credentials and issue a JWT. It has no entity or repository of its own — it depends on the users repository.
 
 ## Service
 
 ```go
-// internal/auth/auth.service.go
-package auth_domain
+// internal/authn/auth.service.go
+package authn
 
 import (
     "errors"
@@ -50,8 +50,8 @@ Both a wrong email and a wrong password return the same `"invalid credentials"` 
 ## DTO
 
 ```go
-// internal/auth/dto/token.dto.go
-package auth_dto
+// internal/authn/dto/token.dto.go
+package authn_dto
 
 type TokenDto struct {
     Token string `json:"token"`
@@ -61,15 +61,15 @@ type TokenDto struct {
 ## Controller
 
 ```go
-// internal/auth/auth.controller.go
-package auth_domain
+// internal/authn/auth.controller.go
+package authn
 
 import (
     "net/http"
 
     "github.com/gin-gonic/gin"
     "github.com/go-minstack/web"
-    auth_dto "task-api/internal/auth/dto"
+    authn_dto "task-api/internal/authn/dto"
     "task-api/internal/users/dto"
 )
 
@@ -92,15 +92,15 @@ func (c *AuthController) login(ctx *gin.Context) {
         ctx.JSON(http.StatusUnauthorized, web.NewErrorDto(err))
         return
     }
-    ctx.JSON(http.StatusOK, auth_dto.TokenDto{Token: token})
+    ctx.JSON(http.StatusOK, authn_dto.TokenDto{Token: token})
 }
 ```
 
 ## Routes
 
 ```go
-// internal/auth/auth.routes.go
-package auth_domain
+// internal/authn/auth.routes.go
+package authn
 
 import "github.com/gin-gonic/gin"
 
@@ -113,8 +113,8 @@ func RegisterRoutes(r *gin.Engine, c *AuthController) {
 ## Module
 
 ```go
-// internal/auth/module.go
-package auth_domain
+// internal/authn/module.go
+package authn
 
 import "github.com/go-minstack/core"
 
