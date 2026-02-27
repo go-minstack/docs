@@ -49,8 +49,8 @@ func (r *TaskRepository) FindByUserID(userID uint) ([]task_entities.Task, error)
 ## DTOs
 
 ```go
-// internal/tasks/dto/task.dto.go
-package dto
+// internal/tasks/dto/task.task_dto.go
+package task_dto
 
 import task_entities "task-api/internal/tasks/entities"
 
@@ -74,8 +74,8 @@ func NewTaskDto(t *task_entities.Task) TaskDto {
 ```
 
 ```go
-// internal/tasks/dto/create_task.dto.go
-package dto
+// internal/tasks/dto/create_task.task_dto.go
+package task_dto
 
 type CreateTaskDto struct {
     Title       string `json:"title"       binding:"required"`
@@ -84,8 +84,8 @@ type CreateTaskDto struct {
 ```
 
 ```go
-// internal/tasks/dto/update_task.dto.go
-package dto
+// internal/tasks/dto/update_task.task_dto.go
+package task_dto
 
 type UpdateTaskDto struct {
     Title       string `json:"title"`
@@ -120,20 +120,20 @@ func NewTaskService(tasks *task_repos.TaskRepository) *TaskService {
     return &TaskService{tasks: tasks}
 }
 
-func (s *TaskService) List(claims *auth.Claims) ([]dto.TaskDto, error) {
+func (s *TaskService) List(claims *auth.Claims) ([]task_dto.TaskDto, error) {
     userID, _ := strconv.ParseUint(claims.Subject, 10, 64)
     tasks, err := s.tasks.FindByUserID(uint(userID))
     if err != nil {
         return nil, err
     }
-    dtos := make([]dto.TaskDto, len(tasks))
+    dtos := make([]task_dto.TaskDto, len(tasks))
     for i, t := range tasks {
-        dtos[i] = dto.NewTaskDto(&t)
+        dtos[i] = task_dto.NewTaskDto(&t)
     }
     return dtos, nil
 }
 
-func (s *TaskService) Create(claims *auth.Claims, input dto.CreateTaskDto) (*dto.TaskDto, error) {
+func (s *TaskService) Create(claims *auth.Claims, input task_dto.CreateTaskDto) (*task_dto.TaskDto, error) {
     userID, _ := strconv.ParseUint(claims.Subject, 10, 64)
     task := &task_entities.Task{
         Title:       input.Title,
@@ -143,11 +143,11 @@ func (s *TaskService) Create(claims *auth.Claims, input dto.CreateTaskDto) (*dto
     if err := s.tasks.Create(task); err != nil {
         return nil, err
     }
-    result := dto.NewTaskDto(task)
+    result := task_dto.NewTaskDto(task)
     return &result, nil
 }
 
-func (s *TaskService) Get(claims *auth.Claims, id uint) (*dto.TaskDto, error) {
+func (s *TaskService) Get(claims *auth.Claims, id uint) (*task_dto.TaskDto, error) {
     task, err := s.tasks.FindByID(id)
     if err != nil {
         return nil, err
@@ -155,11 +155,11 @@ func (s *TaskService) Get(claims *auth.Claims, id uint) (*dto.TaskDto, error) {
     if err := s.assertOwner(claims, task); err != nil {
         return nil, err
     }
-    result := dto.NewTaskDto(task)
+    result := task_dto.NewTaskDto(task)
     return &result, nil
 }
 
-func (s *TaskService) Update(claims *auth.Claims, id uint, input dto.UpdateTaskDto) (*dto.TaskDto, error) {
+func (s *TaskService) Update(claims *auth.Claims, id uint, input task_dto.UpdateTaskDto) (*task_dto.TaskDto, error) {
     task, err := s.tasks.FindByID(id)
     if err != nil {
         return nil, err
@@ -241,7 +241,7 @@ func (c *TaskController) list(ctx *gin.Context) {
 }
 
 func (c *TaskController) create(ctx *gin.Context) {
-    var input dto.CreateTaskDto
+    var input task_dto.CreateTaskDto
     if err := ctx.ShouldBindJSON(&input); err != nil {
         ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))
         return
@@ -280,7 +280,7 @@ func (c *TaskController) update(ctx *gin.Context) {
         ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))
         return
     }
-    var input dto.UpdateTaskDto
+    var input task_dto.UpdateTaskDto
     if err := ctx.ShouldBindJSON(&input); err != nil {
         ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))
         return

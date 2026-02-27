@@ -28,7 +28,7 @@ func NewAuthService(users *user_repos.UserRepository, jwt *auth.JwtService) *Aut
     return &AuthService{users: users, jwt: jwt}
 }
 
-func (s *AuthService) Login(input dto.LoginDto) (string, error) {
+func (s *AuthService) Login(input user_dto.LoginDto) (string, error) {
     user, err := s.users.FindByEmail(input.Email)
     if err != nil {
         return "", errors.New("invalid credentials")
@@ -69,7 +69,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/go-minstack/web"
-    authn_dto "task-api/internal/authn/dto"
+    "task-api/internal/authn/dto"
     "task-api/internal/users/dto"
 )
 
@@ -82,7 +82,7 @@ func NewAuthController(service *AuthService) *AuthController {
 }
 
 func (c *AuthController) login(ctx *gin.Context) {
-    var input dto.LoginDto
+    var input user_dto.LoginDto
     if err := ctx.ShouldBindJSON(&input); err != nil {
         ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))
         return

@@ -10,8 +10,8 @@ Files follow a `<name>.<role>.go` suffix convention. This makes the role of ever
 |--------|------|
 | `user.entity.go` | GORM model |
 | `user.repository.go` | Repository wrapper + domain queries |
-| `user.dto.go` | Response DTO |
-| `create_user.dto.go` | Input DTO |
+| `user.user_dto.go` | Response DTO |
+| `create_user.user_dto.go` | Input DTO |
 | `user.service.go` | Business logic |
 | `user.controller.go` | HTTP handlers |
 | `user.routes.go` | Route registration |
@@ -29,8 +29,8 @@ internal/
     ├── repositories/
     │   └── user.repository.go      # Typed Repository wrapper + domain queries
     ├── dto/
-    │   ├── user.dto.go             # Response DTO + constructor
-    │   └── create_user.dto.go      # Input DTO
+    │   ├── user.user_dto.go             # Response DTO + constructor
+    │   └── create_user.user_dto.go      # Input DTO
     ├── user.service.go             # Business logic
     ├── user.controller.go          # HTTP handlers
     └── user.routes.go              # Route registration
@@ -135,8 +135,8 @@ DTOs decouple your API contract from your database model. Never expose the entit
 **With `gorm.Model` (uint primary key — default):**
 
 ```go
-// dto/user.dto.go
-package dto
+// dto/user.user_dto.go
+package user_dto
 
 import user_entities "github.com/example/app/internal/users/entities"
 
@@ -158,8 +158,8 @@ func NewUserDto(u *user_entities.User) UserDto {
 **With `UuidModel` (UUID primary key — optional):**
 
 ```go
-// dto/user.dto.go
-package dto
+// dto/user.user_dto.go
+package user_dto
 
 import (
     "github.com/google/uuid"
@@ -182,8 +182,8 @@ func NewUserDto(u *user_entities.User) UserDto {
 ```
 
 ```go
-// dto/create_user.dto.go
-package dto
+// dto/create_user.user_dto.go
+package user_dto
 
 type CreateUserDto struct {
     Name  string `json:"name"  binding:"required"`
@@ -213,7 +213,7 @@ func NewUserService(users *user_repos.UserRepository) *UserService {
     return &UserService{users: users}
 }
 
-func (s *UserService) Create(input dto.CreateUserDto) (*dto.UserDto, error) {
+func (s *UserService) Create(input user_dto.CreateUserDto) (*user_dto.UserDto, error) {
     user := &user_entities.User{
         Name:  input.Name,
         Email: input.Email,
@@ -221,18 +221,18 @@ func (s *UserService) Create(input dto.CreateUserDto) (*dto.UserDto, error) {
     if err := s.users.Create(user); err != nil {
         return nil, err
     }
-    result := dto.NewUserDto(user)
+    result := user_dto.NewUserDto(user)
     return &result, nil
 }
 
-func (s *UserService) List() ([]dto.UserDto, error) {
+func (s *UserService) List() ([]user_dto.UserDto, error) {
     users, err := s.users.FindAll(repository.Order("name"))
     if err != nil {
         return nil, err
     }
-    dtos := make([]dto.UserDto, len(users))
+    dtos := make([]user_dto.UserDto, len(users))
     for i, u := range users {
-        dtos[i] = dto.NewUserDto(&u)
+        dtos[i] = user_dto.NewUserDto(&u)
     }
     return dtos, nil
 }
@@ -269,7 +269,7 @@ func (c *UserController) list(ctx *gin.Context) {
 }
 
 func (c *UserController) create(ctx *gin.Context) {
-    var input dto.CreateUserDto
+    var input user_dto.CreateUserDto
     if err := ctx.ShouldBindJSON(&input); err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return

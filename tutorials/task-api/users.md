@@ -50,8 +50,8 @@ func (r *UserRepository) FindByEmail(email string) (*user_entities.User, error) 
 ## DTOs
 
 ```go
-// internal/users/dto/user.dto.go
-package dto
+// internal/users/dto/user.user_dto.go
+package user_dto
 
 import user_entities "task-api/internal/users/entities"
 
@@ -67,8 +67,8 @@ func NewUserDto(u *user_entities.User) UserDto {
 ```
 
 ```go
-// internal/users/dto/register.dto.go
-package dto
+// internal/users/dto/register.user_dto.go
+package user_dto
 
 type RegisterDto struct {
     Name     string `json:"name"     binding:"required"`
@@ -78,8 +78,8 @@ type RegisterDto struct {
 ```
 
 ```go
-// internal/users/dto/login.dto.go
-package dto
+// internal/users/dto/login.user_dto.go
+package user_dto
 
 type LoginDto struct {
     Email    string `json:"email"    binding:"required,email"`
@@ -110,7 +110,7 @@ func NewUserService(users *user_repos.UserRepository) *UserService {
     return &UserService{users: users}
 }
 
-func (s *UserService) Register(input dto.RegisterDto) (*dto.UserDto, error) {
+func (s *UserService) Register(input user_dto.RegisterDto) (*user_dto.UserDto, error) {
     hash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
     if err != nil {
         return nil, err
@@ -123,16 +123,16 @@ func (s *UserService) Register(input dto.RegisterDto) (*dto.UserDto, error) {
     if err := s.users.Create(user); err != nil {
         return nil, err
     }
-    result := dto.NewUserDto(user)
+    result := user_dto.NewUserDto(user)
     return &result, nil
 }
 
-func (s *UserService) Me(id uint) (*dto.UserDto, error) {
+func (s *UserService) Me(id uint) (*user_dto.UserDto, error) {
     user, err := s.users.FindByID(id)
     if err != nil {
         return nil, err
     }
-    result := dto.NewUserDto(user)
+    result := user_dto.NewUserDto(user)
     return &result, nil
 }
 ```
@@ -162,7 +162,7 @@ func NewUserController(service *UserService) *UserController {
 }
 
 func (c *UserController) register(ctx *gin.Context) {
-    var input dto.RegisterDto
+    var input user_dto.RegisterDto
     if err := ctx.ShouldBindJSON(&input); err != nil {
         ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))
         return

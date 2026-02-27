@@ -79,7 +79,7 @@ func TestTodoService_Create(t *testing.T) {
     repo := &mockTodoRepo{nextID: 1}
     svc := &TodoService{todos: repo}
 
-    todo, err := svc.Create(dto.CreateTodoDto{
+    todo, err := svc.Create(todo_dto.CreateTodoDto{
         Title:       "Buy milk",
         Description: "From the store",
     })
@@ -205,7 +205,7 @@ func TestTodoService_DBErrors(t *testing.T) {
     _, err := svc.List()
     assert.Error(t, err)
 
-    _, err = svc.Create(dto.CreateTodoDto{Title: "Buy milk"})
+    _, err = svc.Create(todo_dto.CreateTodoDto{Title: "Buy milk"})
     assert.Error(t, err)
 
     _, err = svc.Get(1)
