@@ -36,12 +36,17 @@ The package name is `gin`, which conflicts with `github.com/gin-gonic/gin`. Use 
 ## API
 
 ### `gin.Module() fx.Option`
-Registers a `*gin.Engine` into the DI container with sensible defaults (recovery, logger).
+Registers a `*gin.Engine` into the DI container. All Gin debug output and HTTP request logs are routed through the internal `*slog.Logger`.
 
 ## Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
+| `MINSTACK_HTTP_PORT` | — | Port to listen on |
+| `MINSTACK_PORT` | `8080` | Port to listen on (fallback) |
 | `MINSTACK_HOST` | `0.0.0.0` | Address to bind |
-| `MINSTACK_PORT` | `8080` | Port to listen on |
 | `MINSTACK_CORS_ORIGIN` | _(unset)_ | Allowed origin(s), comma-separated. Use `*` to allow all. |
+
+::: tip Port resolution
+`MINSTACK_HTTP_PORT` takes precedence over `MINSTACK_PORT`. Use `MINSTACK_PORT` only as a fallback — prefer `MINSTACK_HTTP_PORT` for new projects.
+:::
