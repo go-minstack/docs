@@ -10,15 +10,25 @@ go get github.com/go-minstack/migration
 
 ## Usage
 
-Embed your SQL migration files, pass the FS to `migration.Module`, then opt-in to running:
+Create a dedicated `internal/migrations` package that exports the embedded FS:
 
 ```go
-//go:embed migrations/*.sql
-var migrationsFS embed.FS
+// internal/migrations/migrations.go
+package migrations
 
+import "embed"
+
+//go:embed *.sql
+var FS embed.FS
+```
+
+Pass it to `migration.Module` and opt-in to running:
+
+```go
+// cmd/main.go
 app := core.New(
     postgres.Module,
-    migration.Module(migrationsFS),
+    migration.Module(migrations.FS),
 )
 app.Invoke(migration.Run)
 app.Run()
@@ -28,10 +38,10 @@ app.Run()
 
 ## Migration files
 
-Create SQL files in a `migrations/` directory following goose conventions:
+Place SQL files in `internal/migrations/` following goose conventions:
 
 ```sql
--- migrations/00001_create_users.sql
+-- 00001_create_users.sql
 
 -- +goose Up
 CREATE TABLE users (
@@ -47,14 +57,11 @@ File names must follow the pattern `{version}_{description}.sql`. Versions are a
 
 ## Custom logger
 
-To inject a custom `*slog.Logger`, wire the `Migrator` manually via a `Register` function:
+To inject a custom `*slog.Logger`, use `New` directly:
 
 ```go
-//go:embed migrations/*.sql
-var migrationsFS embed.FS
-
 func NewMigrator(db *gorm.DB, log *slog.Logger) *migration.Migrator {
-    return migration.New(db, log, migrationsFS)
+    return migration.New(db, log, migrations.FS)
 }
 
 func Register(app *core.App) {
@@ -67,7 +74,7 @@ func Register(app *core.App) {
 
 | Export | Description |
 |--------|-------------|
-| `Module(fs) fx.Option` | Primary — wire migrations in one line via `core.New()` |
+| `Module(fs) fx.Option` | Primary — wire migrations via `core.New()` |
 | `New(db, log, fs) *Migrator` | Create a Migrator with a custom logger |
 | `Run(m *Migrator) error` | FX invoke target for manual wiring |
 | `(*Migrator).Up() error` | Apply all pending migrations |
