@@ -24,7 +24,7 @@ MINSTACK_DB_URL=./data.db ./myapp
 
 ### In-memory database
 
-Useful for tests and scripts:
+If `MINSTACK_DB_URL` is not set, the module logs a warning and automatically falls back to an in-memory database. You can also set it explicitly:
 
 ```sh
 MINSTACK_DB_URL=:memory: ./myapp
@@ -65,7 +65,7 @@ Registers `*gorm.DB` into the DI container. Reads `MINSTACK_DB_URL` from the env
 
 | Variable | Description |
 |----------|-------------|
-| `MINSTACK_DB_URL` | File path (e.g. `./data.db`) or `:memory:` |
+| `MINSTACK_DB_URL` | File path (e.g. `./data.db`) or `:memory:`. If unset, defaults to `:memory:` with a warning. |
 
 ## Constraints
 
