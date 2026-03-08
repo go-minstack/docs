@@ -48,6 +48,7 @@ export default defineConfig({
             text: 'Data',
             items: [
               { text: 'repository', link: '/modules/repository' },
+              { text: 'migration', link: '/modules/migration' },
               { text: 'sqlite', link: '/modules/sqlite' },
               { text: 'mysql', link: '/modules/mysql' },
               { text: 'postgres', link: '/modules/postgres' },
