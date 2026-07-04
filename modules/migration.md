@@ -5,7 +5,7 @@ SQL migrations for MinStack via [goose](https://github.com/pressly/goose). The S
 ## Installation
 
 ```sh
-go get github.com/go-minstack/migration
+go get github.com/go-minstack/go-minstack/migration
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ Pass it to `migration.Module` and opt-in to running:
 ```go
 // cmd/main.go
 app := core.New(
-    postgres.Module,
+    postgres.Module(),
     migration.Module(migrations.FS),
 )
 app.Invoke(migration.Run)

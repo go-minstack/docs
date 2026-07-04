@@ -5,7 +5,7 @@ Generic, type-safe GORM repository for MinStack. Eliminates data access boilerpl
 ## Installation
 
 ```sh
-go get github.com/go-minstack/repository
+go get github.com/go-minstack/go-minstack/repository
 ```
 
 ## Usage
@@ -198,7 +198,7 @@ p := repository.NewPagination(page, limit)
 
 ## Example
 
-See [examples/hello](https://github.com/go-minstack/repository/tree/main/examples/hello) — demonstrates Save, FindAll, FindOne, UpdatesByID, Count, Paginate, and DeleteByID with SQLite in-memory.
+See [examples/hello](https://github.com/go-minstack/go-minstack/tree/main/repository/examples/hello) — demonstrates Save, FindAll, FindOne, UpdatesByID, Count, Paginate, and DeleteByID with SQLite in-memory.
 
 ## Constraints
 

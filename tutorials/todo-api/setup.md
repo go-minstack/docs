@@ -25,11 +25,11 @@ go mod init todo-api
 Install dependencies:
 
 ```sh
-go get github.com/go-minstack/core
-go get github.com/go-minstack/gin
-go get github.com/go-minstack/sqlite
-go get github.com/go-minstack/repository
-go get github.com/go-minstack/web
+go get github.com/go-minstack/go-minstack/core
+go get github.com/go-minstack/go-minstack/gin
+go get github.com/go-minstack/go-minstack/sqlite
+go get github.com/go-minstack/go-minstack/repository
+go get github.com/go-minstack/go-minstack/web
 go get gorm.io/gorm
 ```
 

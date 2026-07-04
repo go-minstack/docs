@@ -27,7 +27,7 @@ The `Password` field stores a bcrypt hash — never the plaintext value.
 package user_repositories
 
 import (
-    "github.com/go-minstack/repository"
+    "github.com/go-minstack/go-minstack/repository"
     user_entities "task-api/internal/users/entities"
     "gorm.io/gorm"
 )
@@ -154,8 +154,8 @@ import (
     "strconv"
 
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
-    "github.com/go-minstack/web"
+    "github.com/go-minstack/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/web"
     "task-api/internal/users/dto"
 )
 
@@ -203,7 +203,7 @@ package users
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
 )
 
 func RegisterRoutes(r *gin.Engine, c *UserController, jwt *auth.JwtService) {
@@ -222,7 +222,7 @@ func RegisterRoutes(r *gin.Engine, c *UserController, jwt *auth.JwtService) {
 package users
 
 import (
-    "github.com/go-minstack/core"
+    "github.com/go-minstack/go-minstack/core"
     user_repos "task-api/internal/users/repositories"
 )
 

@@ -5,7 +5,7 @@ Structured logging module for MinStack. Provides a `*slog.Logger` (Go standard l
 ## Installation
 
 ```sh
-go get github.com/go-minstack/logger
+go get github.com/go-minstack/go-minstack/logger
 ```
 
 ## Usage

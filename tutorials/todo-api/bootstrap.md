@@ -8,9 +8,9 @@ Wire everything together in `cmd/main.go` and start the app.
 package main
 
 import (
-	"github.com/go-minstack/core"
-	mgin "github.com/go-minstack/gin"
-	"github.com/go-minstack/sqlite"
+	"github.com/go-minstack/go-minstack/core"
+	mgin "github.com/go-minstack/go-minstack/gin"
+	"github.com/go-minstack/go-minstack/sqlite"
 	"todo-api/internal/todos"
 	todo_entities "todo-api/internal/todos/entities"
 	"gorm.io/gorm"

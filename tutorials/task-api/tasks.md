@@ -28,7 +28,7 @@ type Task struct {
 package task_repositories
 
 import (
-    "github.com/go-minstack/repository"
+    "github.com/go-minstack/go-minstack/repository"
     task_entities "task-api/internal/tasks/entities"
     "gorm.io/gorm"
 )
@@ -112,7 +112,7 @@ import (
     "log/slog"
     "strconv"
 
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
     "task-api/internal/tasks/dto"
     task_entities "task-api/internal/tasks/entities"
     task_repos "task-api/internal/tasks/repositories"
@@ -228,8 +228,8 @@ import (
     "strconv"
 
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
-    "github.com/go-minstack/web"
+    "github.com/go-minstack/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/web"
     "task-api/internal/tasks/dto"
 )
 
@@ -332,7 +332,7 @@ package tasks
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
 )
 
 func RegisterRoutes(r *gin.Engine, c *TaskController, jwt *auth.JwtService) {
@@ -354,7 +354,7 @@ func RegisterRoutes(r *gin.Engine, c *TaskController, jwt *auth.JwtService) {
 package tasks
 
 import (
-    "github.com/go-minstack/core"
+    "github.com/go-minstack/go-minstack/core"
     task_repos "task-api/internal/tasks/repositories"
 )
 

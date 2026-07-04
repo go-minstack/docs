@@ -13,7 +13,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Modules', link: '/modules/core' },
       { text: 'Tutorials', link: '/tutorials/todo-api/' },
-      { text: 'GitHub', link: 'https://github.com/go-minstack/docs' },
+      { text: 'GitHub', link: 'https://github.com/go-minstack/go-minstack' },
     ],
 
     sidebar: [

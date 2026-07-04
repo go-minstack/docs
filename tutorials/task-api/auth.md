@@ -14,7 +14,7 @@ import (
     "log/slog"
     "time"
 
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
     "golang.org/x/crypto/bcrypt"
     "task-api/internal/users/dto"
     user_repos "task-api/internal/users/repositories"
@@ -77,7 +77,7 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/web"
+    "github.com/go-minstack/go-minstack/web"
     "task-api/internal/authn/dto"
     "task-api/internal/users/dto"
 )
@@ -125,7 +125,7 @@ func RegisterRoutes(r *gin.Engine, c *AuthController) {
 // internal/authn/module.go
 package authn
 
-import "github.com/go-minstack/core"
+import "github.com/go-minstack/go-minstack/core"
 
 func Register(app *core.App) {
     app.Provide(NewAuthService)

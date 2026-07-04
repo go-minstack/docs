@@ -5,7 +5,7 @@ JWT authentication module for MinStack. Provides RSA or HMAC token signing and v
 ## Installation
 
 ```sh
-go get github.com/go-minstack/auth
+go get github.com/go-minstack/go-minstack/auth
 ```
 
 ## Usage
@@ -16,15 +16,14 @@ go get github.com/go-minstack/auth
 package main
 
 import (
-    "github.com/go-minstack/auth"
-    "github.com/go-minstack/core"
-    mgin "github.com/go-minstack/gin"
-    "github.com/go-minstack/logger"
+    "github.com/go-minstack/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/core"
+    mgin "github.com/go-minstack/go-minstack/gin"
     "github.com/example/app/internal/users"
 )
 
 func main() {
-    app := core.New(mgin.Module(), logger.Module(), auth.Module())
+    app := core.New(mgin.Module(), auth.Module())
 
     app.Provide(users.NewUserController)
     app.Invoke(users.RegisterRoutes)
@@ -89,7 +88,7 @@ func NewLoginResponseDto(token string, expiresInSeconds int64) LoginResponseDto 
 // dto/profile.dto.go
 package dto
 
-import "github.com/go-minstack/auth"
+import "github.com/go-minstack/go-minstack/auth"
 
 type ProfileDto struct {
     Subject string   `json:"subject"`
@@ -111,7 +110,7 @@ package users
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
 )
 
 func RegisterRoutes(r *gin.Engine, c *UserController, svc *auth.JwtService) {
@@ -133,7 +132,7 @@ import (
     "time"
 
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/auth"
+    "github.com/go-minstack/go-minstack/auth"
     "github.com/example/app/internal/users/dto"
 )
 

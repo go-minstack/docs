@@ -5,13 +5,13 @@ Shared HTTP response types for MinStack. Zero dependencies — just two lightwei
 ## Installation
 
 ```sh
-go get github.com/go-minstack/web
+go get github.com/go-minstack/go-minstack/web
 ```
 
 ## Usage
 
 ```go
-import "github.com/go-minstack/web"
+import "github.com/go-minstack/go-minstack/web"
 
 // Error response
 ctx.JSON(http.StatusBadRequest, web.NewErrorDto(err))

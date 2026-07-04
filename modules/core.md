@@ -5,7 +5,7 @@ The minimal foundation for MinStack. Every other module depends on this — noth
 ## Installation
 
 ```sh
-go get github.com/go-minstack/core
+go get github.com/go-minstack/go-minstack/core
 ```
 
 ## Usage

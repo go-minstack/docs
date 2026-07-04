@@ -5,7 +5,7 @@ MySQL module for MinStack. Provides a GORM `*gorm.DB` and a `binary(16)` UUID ty
 ## Installation
 
 ```sh
-go get github.com/go-minstack/mysql
+go get github.com/go-minstack/go-minstack/mysql
 ```
 
 ## Usage

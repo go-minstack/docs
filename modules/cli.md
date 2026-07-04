@@ -5,7 +5,7 @@ Run a Go program as a one-shot CLI process. The app exits automatically when you
 ## Installation
 
 ```sh
-go get github.com/go-minstack/cli
+go get github.com/go-minstack/go-minstack/cli
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ func (a *App) Run(ctx context.Context) error {
 }
 
 func main() {
-    app := core.New(cli.Module(), logger.Module())
+    app := core.New(cli.Module())
     app.Provide(NewApp)
     app.Run()
 }

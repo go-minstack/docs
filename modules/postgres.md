@@ -5,7 +5,7 @@ PostgreSQL module for MinStack. Provides a GORM `*gorm.DB` connected to a Postgr
 ## Installation
 
 ```sh
-go get github.com/go-minstack/postgres
+go get github.com/go-minstack/go-minstack/postgres
 ```
 
 ## Usage

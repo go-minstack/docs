@@ -31,7 +31,7 @@ internal/todos/repositories/todo.repository.go
 package todo_repositories
 
 import (
-	"github.com/go-minstack/repository"
+	"github.com/go-minstack/go-minstack/repository"
 	todo_entities "todo-api/internal/todos/entities"
 	"gorm.io/gorm"
 )
@@ -116,7 +116,7 @@ package todos
 import (
 	"log/slog"
 
-	"github.com/go-minstack/repository"
+	"github.com/go-minstack/go-minstack/repository"
 	"todo-api/internal/todos/dto"
 	todo_entities "todo-api/internal/todos/entities"
 	todo_repos "todo-api/internal/todos/repositories"
@@ -239,7 +239,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-minstack/web"
+	"github.com/go-minstack/go-minstack/web"
 	"todo-api/internal/todos/dto"
 )
 
@@ -360,7 +360,7 @@ internal/todos/module.go
 package todos
 
 import (
-	"github.com/go-minstack/core"
+	"github.com/go-minstack/go-minstack/core"
 	todo_repos "todo-api/internal/todos/repositories"
 )
 

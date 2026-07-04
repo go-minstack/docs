@@ -5,15 +5,15 @@ HTTP server module for MinStack, built on [Gin](https://github.com/gin-gonic/gin
 ## Installation
 
 ```sh
-go get github.com/go-minstack/gin
+go get github.com/go-minstack/go-minstack/gin
 ```
 
 ## Usage
 
 ```go
 import (
-    "github.com/go-minstack/core"
-    mgin "github.com/go-minstack/gin"
+    "github.com/go-minstack/go-minstack/core"
+    mgin "github.com/go-minstack/go-minstack/gin"
 )
 
 func registerRoutes(r *gin.Engine) {

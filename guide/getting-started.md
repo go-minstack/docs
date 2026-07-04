@@ -2,20 +2,24 @@
 
 ## Prerequisites
 
-- Go 1.22 or later
+- Go 1.25 or later
 
 ## Installation
 
-Install the modules you need:
+Install only the packages your app needs:
 
 ```sh
-go get github.com/go-minstack/core
-go get github.com/go-minstack/gin      # HTTP server
-go get github.com/go-minstack/cli      # CLI / scripts
-go get github.com/go-minstack/logger   # structured logging
-go get github.com/go-minstack/mysql    # MySQL
-go get github.com/go-minstack/postgres # PostgreSQL
-go get github.com/go-minstack/sqlite   # SQLite
+go get github.com/go-minstack/go-minstack/core
+go get github.com/go-minstack/go-minstack/gin      # HTTP server
+go get github.com/go-minstack/go-minstack/cli      # CLI / scripts
+go get github.com/go-minstack/go-minstack/auth     # JWT auth
+go get github.com/go-minstack/go-minstack/logger   # structured logging
+go get github.com/go-minstack/go-minstack/mysql    # MySQL
+go get github.com/go-minstack/go-minstack/postgres # PostgreSQL
+go get github.com/go-minstack/go-minstack/sqlite   # SQLite
+go get github.com/go-minstack/go-minstack/repository
+go get github.com/go-minstack/go-minstack/web
+go get github.com/go-minstack/go-minstack/migration
 ```
 
 ## Your first app
@@ -29,8 +33,8 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "github.com/go-minstack/core"
-    mgin "github.com/go-minstack/gin"
+    "github.com/go-minstack/go-minstack/core"
+    mgin "github.com/go-minstack/go-minstack/gin"
 )
 
 func registerRoutes(r *gin.Engine) {
@@ -57,9 +61,8 @@ import (
     "context"
     "log/slog"
 
-    "github.com/go-minstack/cli"
-    "github.com/go-minstack/core"
-    "github.com/go-minstack/logger"
+    "github.com/go-minstack/go-minstack/cli"
+    "github.com/go-minstack/go-minstack/core"
 )
 
 type App struct{ log *slog.Logger }
@@ -72,7 +75,7 @@ func (a *App) Run(ctx context.Context) error {
 }
 
 func main() {
-    app := core.New(cli.Module(), logger.Module())
+    app := core.New(cli.Module())
     app.Provide(NewApp)
     app.Run()
 }
@@ -90,8 +93,7 @@ import (
     "log"
     "log/slog"
 
-    "github.com/go-minstack/core"
-    "github.com/go-minstack/logger"
+    "github.com/go-minstack/go-minstack/core"
 )
 
 type Greeter struct{ log *slog.Logger }
@@ -103,7 +105,7 @@ func run(g *Greeter) {
 }
 
 func main() {
-    app := core.New(logger.Module())
+    app := core.New()
     app.Provide(NewGreeter)
     app.Invoke(run)
 
@@ -155,6 +157,13 @@ Database modules read connection details from the environment:
 | Variable | Used by |
 |----------|---------|
 | `MINSTACK_DB_URL` | mysql, postgres, sqlite |
-| `MINSTACK_HOST` | gin (default: `0.0.0.0`) |
-| `MINSTACK_PORT` | gin (default: `8080`) |
+| `MINSTACK_HOST` | gin |
+| `MINSTACK_HTTP_PORT` | gin (preferred port variable) |
+| `MINSTACK_PORT` | gin (fallback port variable, default: `8080`) |
 | `MINSTACK_CORS_ORIGIN` | gin (optional) |
+| `MINSTACK_JWT_SECRET` | auth (HMAC fallback) |
+| `MINSTACK_JWT_PRIVATE_KEY` | auth (RSA sign + validate) |
+| `MINSTACK_JWT_PUBLIC_KEY` | auth (RSA validate) |
+| `MINSTACK_JWKS_URL` | auth (JWKS validate) |
+| `MINSTACK_LOG_LEVEL` | logger |
+| `MINSTACK_LOG_FORMAT` | logger |

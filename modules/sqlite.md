@@ -5,7 +5,7 @@ SQLite module for MinStack. Provides a GORM `*gorm.DB` backed by SQLite — no C
 ## Installation
 
 ```sh
-go get github.com/go-minstack/sqlite
+go get github.com/go-minstack/go-minstack/sqlite
 ```
 
 ## Usage

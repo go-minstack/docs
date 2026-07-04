@@ -65,7 +65,7 @@ type User struct {
 ```go
 package user_entities
 
-import "github.com/go-minstack/postgres"
+import "github.com/go-minstack/go-minstack/postgres"
 
 type User struct {
     postgres.UuidModel
@@ -84,7 +84,7 @@ Wraps the generic repository and adds domain-specific queries.
 package user_repositories
 
 import (
-    "github.com/go-minstack/repository"
+    "github.com/go-minstack/go-minstack/repository"
     user_entities "github.com/example/app/internal/users/entities"
     "gorm.io/gorm"
 )
@@ -109,7 +109,7 @@ func (r *UserRepository) FindByEmail(email string) (*user_entities.User, error) 
 package user_repositories
 
 import (
-    "github.com/go-minstack/repository"
+    "github.com/go-minstack/go-minstack/repository"
     user_entities "github.com/example/app/internal/users/entities"
     "gorm.io/gorm"
 )
@@ -199,7 +199,7 @@ Contains all business logic. Depends on the repository — never on `*gorm.DB` d
 package users
 
 import (
-    "github.com/go-minstack/repository"
+    "github.com/go-minstack/go-minstack/repository"
     "github.com/example/app/internal/users/dto"
     user_entities "github.com/example/app/internal/users/entities"
     user_repos "github.com/example/app/internal/users/repositories"
@@ -309,9 +309,9 @@ Wire everything together in `main.go`. FX resolves all dependencies automaticall
 package main
 
 import (
-    "github.com/go-minstack/core"
-    mgin "github.com/go-minstack/gin"
-    "github.com/go-minstack/postgres"
+    "github.com/go-minstack/go-minstack/core"
+    mgin "github.com/go-minstack/go-minstack/gin"
+    "github.com/go-minstack/go-minstack/postgres"
     "github.com/example/app/internal/users"
     user_entities "github.com/example/app/internal/users/entities"
     user_repos "github.com/example/app/internal/users/repositories"

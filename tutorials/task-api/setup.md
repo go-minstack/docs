@@ -26,12 +26,12 @@ go mod init task-api
 Install all dependencies with `go get`:
 
 ```sh
-go get github.com/go-minstack/core
-go get github.com/go-minstack/gin
-go get github.com/go-minstack/sqlite
-go get github.com/go-minstack/auth
-go get github.com/go-minstack/repository
-go get github.com/go-minstack/web
+go get github.com/go-minstack/go-minstack/core
+go get github.com/go-minstack/go-minstack/gin
+go get github.com/go-minstack/go-minstack/sqlite
+go get github.com/go-minstack/go-minstack/auth
+go get github.com/go-minstack/go-minstack/repository
+go get github.com/go-minstack/go-minstack/web
 go get golang.org/x/crypto
 go get gorm.io/gorm
 ```

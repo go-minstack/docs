@@ -25,7 +25,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/go-minstack/repository"
+	"github.com/go-minstack/go-minstack/repository"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"todo-api/internal/todos/dto"
@@ -221,9 +221,9 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-minstack/core"
-	mgin "github.com/go-minstack/gin"
-	"github.com/go-minstack/sqlite"
+	"github.com/go-minstack/go-minstack/core"
+	mgin "github.com/go-minstack/go-minstack/gin"
+	"github.com/go-minstack/go-minstack/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"todo-api/internal/todos"
